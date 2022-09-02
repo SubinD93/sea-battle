@@ -11,9 +11,10 @@ const game = {
     ships: [],
     shipCount: 0,
     optionShip: {
-        count: [1, 0, 0, 0],
+        count: [1, 2, 3, 4],
         size: [4, 3, 2, 1]
     },
+    collision: new Set(),
     generateShip() {
         for(let i = 0; i < this.optionShip.count.length; i++) {
             for(let j = 0; j < this.optionShip.count[i]; j++) {
@@ -35,14 +36,14 @@ const game = {
 
         if (directon) {
             x = Math.floor(Math.random() * 10);
-            console.log('x: ', x);
+            
             y = Math.floor(Math.random() * (10 - shipSize));
-            console.log('y: ', y);
+            
         } else {
             x = Math.floor(Math.random() * (10 - shipSize));
-            console.log('x: ', x);
+            
             y = Math.floor(Math.random() * 10);
-            console.log('y: ', y);
+            
         }
 
         for(let i = 0; i < shipSize; i++) {
@@ -54,7 +55,46 @@ const game = {
             ship.hit.push('');
         }
 
+        if (this.checkCollision(ship.location)) {
+            return this.generateOptionsShip(shipSize)
+        }
+
+        this.addCollision(ship.location);
+
         return ship;
+    },
+    checkCollision(location) {
+        for (const coord of location) {
+            if (this.collision.has(coord)) {
+                return true;
+            }
+        }
+    },
+    addCollision(location) {
+        for (let i = 0; i < location.length; i++) {
+            const startCoordX = location[i][0] - 1;
+            console.log('startCoordX: ', startCoordX);
+
+            for (let j = startCoordX; j < startCoordX + 3; j++) {
+                const startCoordY = location[i][1] - 1
+                console.log('startCoordY: ', startCoordY);
+
+                for (let z = startCoordY; z < startCoordY + 3; z++) {
+                    
+                    if (j >= 0 && j < 10 && z >= 0 && z < 10) {
+                        const coord = j + '' + z;
+                        console.log('coord: ', coord);
+                        
+                            this.collision.add(coord);
+                        
+                        
+                    }
+
+                    
+                }
+            }
+            
+        }
     }
 };
 
@@ -145,7 +185,7 @@ const init = () => {
         play.record = 0;
         play.render();
     })
-    console.log(game.ships);
+    console.log(game);
 };
 
 init();
